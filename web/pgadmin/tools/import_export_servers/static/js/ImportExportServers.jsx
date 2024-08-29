@@ -63,6 +63,10 @@ export default function ImportExportServers({onClose}) {
   const [summaryText, setSummaryText] = React.useState('');
   const [noteText, setNoteText] = React.useState('');
   const api = getApiInstance();
+  const schemaRef = React.useRef();
+  
+  if (!schemaRef.current)
+    schemaRef.current = new ImportExportSelectionSchema();
 
   const onSave = () => {
     let post_data = {'filename': selectionFormData.filename},
@@ -215,7 +219,7 @@ export default function ImportExportServers({onClose}) {
             formType={'dialog'}
             getInitData={() => {/*This is intentional (SonarQube)*/}}
             viewHelperProps={{ mode: 'create' }}
-            schema={new ImportExportSelectionSchema()}
+            schema={schemaRef.current}
             showFooter={false}
             isTabView={false}
             formClassName='ImportExportServers-Background'

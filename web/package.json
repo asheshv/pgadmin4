@@ -136,7 +136,7 @@
     "react-leaflet": "^3.2.2",
     "react-new-window": "^1.0.1",
     "react-resize-detector": "^11.0.1",
-    "react-rnd": "^10.3.5",
+    "react-rnd": "^10.4.12",
     "react-select": "^5.7.2",
     "react-timer-hook": "^3.0.5",
     "react-virtualized-auto-sizer": "^1.0.6",
@@ -153,7 +153,7 @@
     "xterm-addon-fit": "^0.5.0",
     "xterm-addon-search": "^0.13.0",
     "xterm-addon-web-links": "^0.4.0",
-    "zustand": "^4.4.1"
+    "zustand": "^4.5.4"
   },
   "scripts": {
     "linter": "yarn run eslint -c .eslintrc.js .",
