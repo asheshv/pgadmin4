@@ -41,7 +41,7 @@ import { DataGridContext } from './context';
 import { DataGridHeader } from './header';
 import { DataGridRow } from './row';
 import { FeatureSet } from './features';
-import { createGridColumns } from './utils';
+import { createGridColumns, GRID_STATE } from './utils';
 
 
 export default function DataGridView({
@@ -67,7 +67,8 @@ export default function DataGridView({
 
   useEffect(() => {
     return schemaState.subscribe(
-      accessPath, () => setRefreshKey(Date.now()), 'states'
+      accessPath.concat(GRID_STATE),
+      () => setRefreshKey(Date.now()), 'states'
     );
   }, [refreshKey]);
 

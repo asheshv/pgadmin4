@@ -23,7 +23,7 @@ import { SchemaStateContext } from '../SchemaState';
 import { booleanEvaluator, registerOptionEvaluator } from '../options';
 import { View } from '../registry';
 
-import { SearchBox } from './SearchBox';
+import { SearchBox, SEARCH_STATE_PATH } from './SearchBox';
 import { DataGridContext } from './context';
 
 
@@ -92,7 +92,7 @@ export function DataGridFormHeader({tableEleRef}) {
       addOnTop: addOnTop
     });
 
-    schemaState.setState(accessPath.concat('__searchText'), '');
+    schemaState.setState(accessPath.concat(SEARCH_STATE_PATH), '');
     headerSchema.state?.validate(headerSchema._defaults || {});
   }, [canAddRow, rows?.length, addOnTop]);
 

@@ -16,7 +16,9 @@ import {
 import { SchemaStateContext } from '../SchemaState';
 
 import { DataGridContext } from './context';
+import { GRID_STATE } from './utils';
 
+export const SEARCH_STATE_PATH = [GRID_STATE, '__searchText'];
 
 export function SearchBox() {
   const schemaState = useContext(SchemaStateContext);
@@ -26,9 +28,9 @@ export function SearchBox() {
 
   if (!canSearch) return <></>;
 
-  const searchText = schemaState.state(accessPath.concat('__searchText'));
+  const searchText = schemaState.state(accessPath.concat(SEARCH_STATE_PATH));
   const searchTextChange = (value) => {
-    schemaState.setState(accessPath.concat('__searchText'), value);
+    schemaState.setState(accessPath.concat(SEARCH_STATE_PATH), value);
   };
 
   const searchOptions = field.searchOptions || {

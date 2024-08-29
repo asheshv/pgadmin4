@@ -9,6 +9,8 @@
 
 import { createGridColumns } from './createGridColumns';
 
+export const GRID_STATE = '__gridState';
+
 export { 
   createGridColumns,
 };

@@ -12,6 +12,7 @@ import {
 } from '../../options';
 
 import Feature from './feature';
+import { SEARCH_STATE_PATH } from '../SearchBox';
 
 
 registerOptionEvaluator('canSearch', booleanEvaluator, false, ['collection']);
@@ -39,7 +40,7 @@ export default class GlobalSearch extends Feature {
     }
 
     const searchText = this.schemaState.state(
-      this.accessPath.concat('__searchText')
+      this.accessPath.concat(SEARCH_STATE_PATH)
     );
 
     table.setOptions((prev) => ({

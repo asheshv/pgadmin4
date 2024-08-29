@@ -18,7 +18,7 @@ import gettext from 'sources/gettext';
 import { requestAnimationAndFocus } from 'sources/utils';
 
 import { SchemaStateContext } from '../SchemaState';
-import { SearchBox } from './SearchBox';
+import { SearchBox, SEARCH_STATE_PATH } from './SearchBox';
 import { DataGridContext } from './context';
 
 
@@ -52,7 +52,7 @@ export function DataGridHeader({tableEleRef}) {
       addOnTop: addOnTop
     });
 
-    schemaState.setState(accessPath.concat('__searchText'), '');
+    schemaState.setState(accessPath.concat(SEARCH_STATE_PATH), '');
   }, [canAddRow, rows?.length]);
 
   useEffect(() => {
