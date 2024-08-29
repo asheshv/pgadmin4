@@ -18,11 +18,12 @@ import CustomPropTypes from 'sources/custom_prop_types';
 import gettext from 'sources/gettext';
 import { requestAnimationAndFocus } from 'sources/utils';
 
+import { SchemaStateContext } from '../SchemaState';
 import { SearchBox } from './SearchBox';
 import { DataGridContext } from './context';
 
 
-export function DataGridHeader({tableEleRef, setRefreshKey}) {
+export function DataGridHeader({tableEleRef}) {
   const {
     accessPath, field, dataDispatch, options, virtualizer, table,
   } = useContext(DataGridContext);
@@ -33,6 +34,7 @@ export function DataGridHeader({tableEleRef, setRefreshKey}) {
 
   const label = field.label || '';
   const newRowIndex = useRef(-1);
+  const schemaState = useContext(SchemaStateContext);
 
   const onAddClick = useCallback(() => {
 
@@ -51,12 +53,7 @@ export function DataGridHeader({tableEleRef, setRefreshKey}) {
       addOnTop: addOnTop
     });
 
-    if (table.__gridChangeSearchText) {
-      table.__gridChangeSearchText('');
-    }
-
-    setRefreshKey(Date.now());
-
+    schemaState.setState(accessPath.concat('__searchText'), '');
   }, [canAddRow, rows?.length]);
 
   useEffect(() => {
@@ -88,7 +85,7 @@ export function DataGridHeader({tableEleRef, setRefreshKey}) {
       {label && <Box className='DataGridView-gridHeader-heading'>{label}</Box>}
       <Box className='DataGridView-gridHeader-middle'
         style={{flex: 1, padding: 0}}>
-        <SearchBox setRefreshKey={setRefreshKey} />
+        <SearchBox />
       </Box>
       <Box className='DataGridView-grid-controls'>
         { canAdd &&
@@ -104,5 +101,4 @@ export function DataGridHeader({tableEleRef, setRefreshKey}) {
 
 DataGridHeader.propTypes = {
   tableEleRef: CustomPropTypes.ref,
-  setRefreshKey: PropTypes.func,
 };

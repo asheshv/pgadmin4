@@ -13,20 +13,23 @@ import PropTypes from 'prop-types';
 import {
   SEARCH_INPUT_ALIGNMENT, SEARCH_INPUT_SIZE, SearchInputText,
 } from 'sources/components/SearchInputText';
+
+import { SchemaStateContext } from '../SchemaState';
+
 import { DataGridContext } from './context';
 
 
-export function SearchBox({setRefreshKey}) {
-  const { field, options: { canSearch }, table } = useContext(DataGridContext);
+export function SearchBox() {
+  const schemaState = useContext(SchemaStateContext);
+  const {
+    accessPath, field, options: { canSearch }
+  } = useContext(DataGridContext);
 
   if (!canSearch) return <></>;
 
+  const searchText = schemaState.state(accessPath.concat('__searchText'));
   const searchTextChange = (value) => {
-    if (table.__gridChangeSearchText) {
-      table.__gridChangeSearchText(value);
-    }
-
-    setRefreshKey(Date.now());
+    schemaState.setState(accessPath.concat('__searchText'), value);
   };
 
   const searchOptions = field.searchOptions || {
@@ -37,12 +40,7 @@ export function SearchBox({setRefreshKey}) {
   return (
     <SearchInputText
       {...searchOptions}
-      searchText={table.__gridSeachText}
-      onChange={searchTextChange}
+      searchText={searchText || ''} onChange={searchTextChange}
     />
   );
 }
-
-SearchBox.Proptypes = {
-  setRefreshKey: PropTypes.func,
-};

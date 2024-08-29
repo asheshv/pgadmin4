@@ -7,7 +7,9 @@
 //
 //////////////////////////////////////////////////////////////
 
-import React, { useContext, useMemo, useRef, useState } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useRef, useState,
+} from 'react';
 
 import Box from '@mui/material/Box';
 import {
@@ -62,6 +64,12 @@ export default function DataGridView({
       setRefreshKey(newKey);
     } 
   );
+
+  useEffect(() => {
+    return schemaState.subscribe(
+      accessPath, () => setRefreshKey(Date.now()), 'states'
+    );
+  }, [refreshKey])
 
   listenDepChanges(accessPath, field, options.visible, schemaState);
 
@@ -138,7 +146,7 @@ export default function DataGridView({
     }}>
       <StyleDataGridBox className={classList.join(' ')}>
         <Box className='DataGridView-grid'>
-          <GridHeader tableEleRef={tableEleRef} setRefreshKey={setRefreshKey}/>
+          <GridHeader tableEleRef={tableEleRef} />
           <DndProvider backend={HTML5Backend}>
             <PgReactTable
               ref={tableEleRef} table={table} data-test="data-grid-view"

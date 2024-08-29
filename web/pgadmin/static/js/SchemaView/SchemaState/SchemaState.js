@@ -99,10 +99,7 @@ export class SchemaState extends DepListener {
   }
 
   setState(state, value) {
-    this.stateStore.set((prev) => {
-      prev[state] = value;
-      return prev;
-    });
+    this.stateStore.set((prev) => _.set(prev, [].concat(state), value));
   }
 
   setError(err) {
@@ -305,7 +302,8 @@ export class SchemaState extends DepListener {
   }
 
   state(_state) {
-    return _state ? this.stateStore.get([_state]) : this.stateStore.getState();
+    return _state ?
+      this.stateStore.get([].concat(_state)) : this.stateStore.getState();
   }
 
   subscribe(path, listener, kind='options') {

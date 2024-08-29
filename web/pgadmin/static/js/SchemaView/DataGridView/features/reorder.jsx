@@ -85,8 +85,7 @@ export default class Reorder extends Feature {
 
   onRow({index, row, rowRef, classList}) {
     const instance = this;
-    if (row)
-      row.reorderDragHandleRef = useRef(null);
+    const reorderDragHandleRef = useRef(null);
 
     const [{ handlerId }, drop] = useDrop({
       accept: 'row',
@@ -143,18 +142,19 @@ export default class Reorder extends Feature {
       }
     });
 
-    if (!this.canReorder) return;
+    if (!this.canReorder || !row) return;
 
-    if (row) {
-      drag(row?.reorderDragHandleRef);
-      drop(rowRef);
-      preview(rowRef);
-    }
+    if (row)
+      row.reorderDragHandleRef = reorderDragHandleRef;
+
+    drag(row.reorderDragHandleRef);
+    drop(rowRef);
+    preview(rowRef);
 
     if (index == this.hoverIndex) {
       classList?.append('DataGridView-tableRowHovered');
     }
 
-    if (row) row.dragHandlerId = handlerId;
+    row.dragHandlerId = handlerId;
   }
 }

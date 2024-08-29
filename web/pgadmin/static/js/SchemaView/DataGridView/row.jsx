@@ -49,8 +49,6 @@ export function DataGridRow({rowId, isResizing}) {
   let attributes = {};
   let expandedRowContents = [];
 
-  if (!row) return <></>;
-
   features.current?.onRow({
     index: rowId, row, rowRef, classList, attributes, expandedRowContents,
     rowOptions, tableOptions: options
@@ -61,6 +59,7 @@ export function DataGridRow({rowId, isResizing}) {
   ]);
 
   return useMemo(() => (
+    !row ? <></> :
     <DataGridRowContext.Provider value={{ rowAccessPath, row }}>
       <PgReactTableRowContent ref={rowRef}
         className={classList.join[' ']}

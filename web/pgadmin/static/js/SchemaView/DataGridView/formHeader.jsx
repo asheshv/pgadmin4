@@ -20,6 +20,7 @@ import CustomPropTypes from 'sources/custom_prop_types';
 import gettext from 'sources/gettext';
 import { requestAnimationAndFocus } from 'sources/utils';
 
+import { SchemaStateContext } from '../SchemaState';
 import { booleanEvaluator, registerOptionEvaluator } from '../options';
 import { View } from '../registry';
 
@@ -57,7 +58,8 @@ const StyledBox = styled(Box)(({theme}) => ({
   },
 }));
 
-export function DataGridFormHeader({tableEleRef, setRefreshKey}) {
+export function DataGridFormHeader({tableEleRef}) {
+
   const {
     accessPath, field, dataDispatch, options, virtualizer, table,
     viewHelperProps,
@@ -69,6 +71,7 @@ export function DataGridFormHeader({tableEleRef, setRefreshKey}) {
 
   const label = field.label || '';
   const newRowIndex = useRef(-1);
+  const schemaState = useContext(SchemaStateContext);
   const headerFormData = useRef({});
   const [addDisabled, setAddDisabled] = useState(canAddRow);
   const {headerSchema} = field;
@@ -90,13 +93,9 @@ export function DataGridFormHeader({tableEleRef, setRefreshKey}) {
       addOnTop: addOnTop
     });
 
-    if (table.__gridChangeSearchText) {
-      table.__gridChangeSearchText('');
-    }
-
-    setRefreshKey(Date.now());
-
-  }, [canAddRow, rows?.length, canAddRow, addOnTop]);
+    schemaState.setState(accessPath.concat('__searchText'), '');
+    headerSchema.state?.validate(headerSchema._defaults || {});
+  }, [canAddRow, rows?.length, addOnTop]);
 
   useEffect(() => {
     if (newRowIndex.current < -1) return;
@@ -130,7 +129,7 @@ export function DataGridFormHeader({tableEleRef, setRefreshKey}) {
         <Box className='DataGridView-gridHeader'>
           {label && <Box className='DataGridView-gridHeaderText'>{label}</Box>}
           <Box className='DataGridView-gridHeaderText' style={{flex: 1}}>
-            <SearchBox setRefreshKey={setRefreshKey} />
+            <SearchBox/>
           </Box>
         </Box>
         {headerFormVisible &&
@@ -165,5 +164,4 @@ export function DataGridFormHeader({tableEleRef, setRefreshKey}) {
 
 DataGridFormHeader.propTypes = {
   tableEleRef: CustomPropTypes.ref,
-  setRefreshKey: PropTypes.func,
 };

@@ -28,8 +28,9 @@ import { evalFunc } from 'sources/utils';
 import { SchemaStateContext } from './SchemaState';
 import { isValueEqual } from './common';
 import {
-  useFieldOptions, useFieldValue, useFieldError, listenDepChanges,
+  useFieldOptions, useFieldValue, useFieldError
 } from './hooks';
+import { listenDepChanges } from './utils';
 
 
 /* Control mapping for form view */

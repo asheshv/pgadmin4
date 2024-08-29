@@ -7,6 +7,9 @@
 //
 //////////////////////////////////////////////////////////////
 
+import { useContext } from 'react';
+import _ from 'lodash';
+
 import {
   booleanEvaluator, registerOptionEvaluator
 } from '../../options';
@@ -20,36 +23,34 @@ registerOptionEvaluator('canSearch', booleanEvaluator, false, ['collection']);
 export default class GlobalSearch extends Feature {
   constructor() {
     super();
-    this.searchVal = '';
   }
 
   onTable({table, options}) {
+
     if (!options.canSearch) {
+      const searchText = '';
+
       table.setOptions((prev) => ({
         ...prev,
         state: {
           ...prev.state,
-          globalFilter: this.serachVal,
+          globalFilter: searchText,
         }
       }));
-
-      table.__gridSeachText = this.searchVal = '';
-      table.__gridChangeSearchText = null;
 
       return;
     }
 
-    const instance = this;
-    table.__gridSeachText = this.searchVal;
+    const searchText = this.schemaState.state(
+      this.accessPath.concat('__searchText')
+    );
+
     table.setOptions((prev) => ({
       ...prev,
       state: {
         ...prev.state,
-        globalFilter: table.__gridSeachText,
+        globalFilter: searchText,
       }
     }));
-    table.__gridChangeSearchText = (text) => {
-      table.__gridSeachText = instance.searchVal = text;
-    };
   }
 }
