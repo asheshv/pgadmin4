@@ -60,39 +60,39 @@ export function DataGridRow({rowId, isResizing}) {
 
   return useMemo(() => (
     !row ? <></> :
-    <DataGridRowContext.Provider value={{ rowAccessPath, row }}>
-      <PgReactTableRowContent ref={rowRef}
-        className={classList.join[' ']}
-        data-test='data-table-row' style={{position: 'initial'}}
-        {...attributes}
-      >
-        {
-          row?.getVisibleCells().map((cell) => {
-            const columnDef = cell.column.columnDef;
-            const content = flexRender(
-              columnDef.cell, {
-                key: columnDef.cell?.type ?? columnDef.id,
-                row: row,
-                getValue: cell.getValue,
-              }
-            );
+      <DataGridRowContext.Provider value={{ rowAccessPath, row }}>
+        <PgReactTableRowContent ref={rowRef}
+          className={classList.join[' ']}
+          data-test='data-table-row' style={{position: 'initial'}}
+          {...attributes}
+        >
+          {
+            row?.getVisibleCells().map((cell) => {
+              const columnDef = cell.column.columnDef;
+              const content = flexRender(
+                columnDef.cell, {
+                  key: columnDef.cell?.type ?? columnDef.id,
+                  row: row,
+                  getValue: cell.getValue,
+                }
+              );
 
-            return (
-              <PgReactTableCell cell={cell} row={row} key={cell.id}>
-                {content}
-              </PgReactTableCell>
-            );
-          })
+              return (
+                <PgReactTableCell cell={cell} row={row} key={cell.id}>
+                  {content}
+                </PgReactTableCell>
+              );
+            })
+          }
+          <div className='hover-overlay'></div>
+        </PgReactTableRowContent>
+        {
+          expandedRowContents.length ?
+            <PgReactTableRowExpandContent
+              row={row} key={`expanded-row-${row?.id}`}>
+              {expandedRowContents}
+            </PgReactTableRowExpandContent> : <></>
         }
-        <div className='hover-overlay'></div>
-      </PgReactTableRowContent>
-      {
-        expandedRowContents.length ?
-          <PgReactTableRowExpandContent
-            row={row} key={`expanded-row-${row?.id}`}>
-            {expandedRowContents}
-          </PgReactTableRowExpandContent> : <></>
-      }
-    </DataGridRowContext.Provider>
+      </DataGridRowContext.Provider>
   ), depsMap);
 }

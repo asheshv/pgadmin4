@@ -7,9 +7,6 @@
 //
 //////////////////////////////////////////////////////////////
 
-import { useContext } from 'react';
-import _ from 'lodash';
-
 import {
   booleanEvaluator, registerOptionEvaluator
 } from '../../options';

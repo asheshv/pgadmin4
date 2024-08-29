@@ -8,7 +8,6 @@
 //////////////////////////////////////////////////////////////
 
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 
 import {
   SEARCH_INPUT_ALIGNMENT, SEARCH_INPUT_SIZE, SearchInputText,

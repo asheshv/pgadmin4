@@ -69,7 +69,7 @@ export default function DataGridView({
     return schemaState.subscribe(
       accessPath, () => setRefreshKey(Date.now()), 'states'
     );
-  }, [refreshKey])
+  }, [refreshKey]);
 
   listenDepChanges(accessPath, field, options.visible, schemaState);
 
