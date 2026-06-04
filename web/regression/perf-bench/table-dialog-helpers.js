@@ -23,6 +23,7 @@ import {
   installErrorRecorders, enableAudit, autoDismissUnlockModal,
   expectNoDivergence, ensureServerRegistered,
   navigateToCatalogNodeViaApi, openEditDialogViaApi,
+  openCreateDialogViaApi,
 } from './audit-helpers';
 
 const PGADMIN_URL =
@@ -125,6 +126,45 @@ export const bootTableEditDialog = async (page, tabName) => {
   return { errors, mock };
 };
 
+// Same as bootTableEditDialog but opens the Create Table dialog
+// (POST /browser/table/obj/... on save) instead of Edit (PUT).
+// Create mode starts with EMPTY sessData — Name is blank, no rows,
+// isNew()=true. The mock intercepts both methods so the same
+// state shape works.
+export const bootTableCreateDialog = async (page, tabName) => {
+  const errors = installErrorRecorders(page);
+
+  await page.setViewportSize({ width: 1600, height: 1000 });
+  await autoDismissUnlockModal(page);
+  await page.goto(PGADMIN_URL, { waitUntil: 'load', timeout: 60_000 });
+  await page.locator('.file-entry').first().waitFor({
+    state: 'visible', timeout: 30_000,
+  });
+  await page.waitForTimeout(1_000);
+  await enableAudit(page);
+
+  const mock = await mockTableSave(page);
+
+  await ensureServerRegistered(page);
+  await navigateToCatalogNodeViaApi(page, 'Tables');
+  await openCreateDialogViaApi(page, 'table');
+
+  // Wait for the Create dialog to render.
+  await page.getByRole('textbox', { name: 'Name' }).first().waitFor({
+    state: 'visible', timeout: 20_000,
+  });
+
+  if (tabName) {
+    const tab = page.getByRole('tab', { name: tabName, exact: true });
+    if (await tab.count()) {
+      await tab.click();
+      await page.waitForTimeout(300);
+    }
+  }
+
+  return { errors, mock };
+};
+
 // Click Save, wait for the mock to fire, assert the canary stayed
 // quiet AND the save was intercepted (not a real DB write). Spec
 // callers use this as the final step.
@@ -149,7 +189,8 @@ export const clickSaveAndExpectMockHit = async (
     await page.waitForTimeout(100);
   }
   expect(mock.saveHits).toBeGreaterThan(before);
-  expect(mock.saveMethods).toContain('PUT');
+  // PUT for Edit, POST for Create. Mock catches both.
+  expect(['PUT', 'POST'].some((m) => mock.saveMethods.includes(m))).toBe(true);
 
   // Walker stayed clean across the whole flow.
   expect(await page.evaluate(() => window.__INCREMENTAL_AUDIT__)).toBe(true);
@@ -181,6 +222,27 @@ export const TABLE_TAB_TESTIDS = {
   Parameters: 'parameters',
   Security: 'security_group',
   Advanced: 'advanced',
+  SQL: 'SQL',
+};
+
+// Read the SQL tab's regenerated preview text. The dialog stitches
+// the SQL together from every tab's current sessData via
+// schema.getSQL() — so the SQL panel acts as a great observer for
+// cross-tab data flow: change a field in tab A, the SQL preview
+// in tab B reflects it.
+//
+// Uses CodeMirror's `.cm-content` text. Returns the trimmed
+// concatenation (CodeMirror's internal newlines preserved as
+// spaces; for tests we just look for substring matches).
+export const readSqlPreview = async (page) => {
+  const sqlTab = page.getByRole('tab', { name: 'SQL', exact: true });
+  await sqlTab.first().click();
+  // Generation is async (debounced); give it a beat to settle.
+  await page.waitForTimeout(1_000);
+  const cm = page.locator(`${''
+  }[data-test="tabpanel"][data-testid="SQL"] .cm-content`).first();
+  await cm.waitFor({ state: 'visible', timeout: 10_000 });
+  return (await cm.textContent()) || '';
 };
 
 // Type into a text field by its accessible name (label).
